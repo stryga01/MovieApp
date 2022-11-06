@@ -5,6 +5,6 @@ export default class MovieApp extends Component {
     super()
   }
   render() {
-    return <h1>My Movie App</h1>
+    return <h1>My Movie Apps</h1>
   }
 }
