@@ -1,0 +1,19 @@
+*, h1, h2, h3, h4, h5, h6, p, ul, li{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    line-height: 1.2;
+    font-family: Roboto, sans-serif;
+    list-style: none;
+}
+
+.spinWrap{
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.ant-pagination-item a{
+    padding: 6px 6px;
+}

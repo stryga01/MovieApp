@@ -1,0 +1,10 @@
+
+.ratedWrap{
+    display: flex;
+    min-height: 90vh;
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    gap: 20px;
+    flex-direction: column;
+    padding-bottom: 40px;
+}

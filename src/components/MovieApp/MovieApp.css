@@ -1,0 +1,30 @@
+.container{
+    width: 1000px;
+    min-height: 100vh;
+    margin: 0 auto;
+}
+
+
+.ant-tabs {
+    gap: 20px;
+}
+
+.ant-tabs-tabpane{
+    display: flex;
+    flex-direction: column;
+    gap:20px
+}
+
+.tabWrap{
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+    gap: 20px;
+}
+
+.contentWrap{
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+    gap: 20px;
+}
