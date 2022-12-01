@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
 import { Alert, Input } from 'antd'
-import { debounce } from 'lodash'
 
-import Spinner from '../MovieApp/Spinner'
+import Spinner from '../Spinner/Spinner'
 import MovieList from '../MovieList/MovieList'
 import PaginationRenderer from '../PaginationRenderer/PaginationRenderer'
 
 export default class SearchTab extends Component {
   componentDidMount() {
-    this.moviesDebounce = debounce(this.props.getMovies, 1000, { leading: false, trailing: true })
     this.props.setError(false)
-    this.moviesDebounce()
+    this.props.getMoviesDebounce()
   }
 
   componentDidUpdate(prevProps) {
@@ -21,10 +19,10 @@ export default class SearchTab extends Component {
       setLoading(true)
       setNotFound(false)
       setPage(1)
-      this.moviesDebounce()
+      this.props.getMoviesDebounce()
     } else if (prevProps.currentPage !== this.props.currentPage) {
       setLoading(true)
-      this.moviesDebounce()
+      this.props.getMoviesDebounce()
     }
   }
 

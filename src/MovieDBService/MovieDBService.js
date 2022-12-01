@@ -4,31 +4,32 @@ export default class MovieDBService {
     this.apiKey = '1291b7d4b65f07f78d6e60dd8001db4a'
   }
 
-  getResourse = async (url) => {
-    const res = await fetch(`${this._basUrl}${url}&api_key=${this.apiKey}`)
+  getResourсe = async (url) => {
+    const res = await fetch(`${this._basUrl}${url}api_key=${this.apiKey}`)
     if (!res.ok) {
       throw new Error('could not fetch')
     }
     return await res.json()
   }
 
-  searchMovies = async (query = 'return', page = 1) => {
-    const res = await this.getResourse(`/search/movie?query=${query}&page=${page}`)
+  getPopularMovies = async () => {
+    const res = await this.getResourсe('/movie/popular?')
+    return res
+  }
+
+  searchMovies = async (query = '', page = 1) => {
+    const res = await this.getResourсe(`/search/movie?query=${query}&page=${page}&`)
     return res
   }
 
   createGuestSession = async () => {
-    const res = await fetch(`https://api.themoviedb.org/3/authentication/guest_session/new?api_key=${this.apiKey}`)
-    if (!res.ok) throw new Error('could not fetch')
-    return await res.json()
+    const res = await this.getResourсe('/authentication/guest_session/new?')
+    return await res
   }
 
   getRatedMovies = async (sessionId, page) => {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/guest_session/${sessionId}/rated/movies?page=${page}&api_key=${this.apiKey}`
-    )
-    if (!res.ok) throw new Error('could not fetch')
-    return await res.json()
+    const res = await this.getResourсe(`/guest_session/${sessionId}/rated/movies?page=${page}&`)
+    return await res
   }
 
   setRating = async (id, sessionId, rating) => {
@@ -47,9 +48,8 @@ export default class MovieDBService {
   }
 
   getGenres = async () => {
-    const res = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${this.apiKey}`)
-    if (!res.ok) throw new Error('could not fetch')
-    return await res.json()
+    const res = await this.getResourсe('/genre/movie/list?')
+    return await res
   }
 }
 

@@ -3,7 +3,7 @@ import { Alert } from 'antd'
 
 import { movieDBService } from '../../MovieDBService/MovieDBService'
 import MovieList from '../MovieList/MovieList'
-import Spinner from '../MovieApp/Spinner'
+import Spinner from '../Spinner/Spinner'
 import './Rated.css'
 import PaginationRenderer from '../PaginationRenderer/PaginationRenderer'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import './MovieList.css'
 
-import { Consumer } from '../GenresContext'
+import { Consumer } from '../../context/GenresContext'
 import MovieCard from '../MovieCard/MovieCard'
 
 const MovieList = (props) => {

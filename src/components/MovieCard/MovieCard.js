@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import { Rate } from 'antd'
 
 import { movieDBService } from '../../MovieDBService/MovieDBService'
-import noPoster from '../../img/no-poster.webp'
+import noPoster from '../../assets/img/no-poster.webp'
 
 import './MovieCard.css'
 

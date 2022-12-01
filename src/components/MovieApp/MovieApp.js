@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Alert, Tabs } from 'antd'
+import { debounce } from 'lodash'
 import { Offline } from 'react-detect-offline'
 
 import { movieDBService } from '../../MovieDBService/MovieDBService'
-import { Provider } from '../GenresContext'
+import { Provider } from '../../context/GenresContext'
 import SearchTab from '../SearchTab/SearchTab'
 import Rated from '../Rated/Rated'
 import './MovieApp.css'
@@ -21,7 +22,6 @@ export default class MovieApp extends Component {
       disconnect: false,
       query: '',
       currentPage: 1,
-      notFound: false,
       sessionId: null,
     }
   }
@@ -58,21 +58,27 @@ export default class MovieApp extends Component {
     })
   }
 
+  renderPopularMovies = () => {
+    const { getPopularMovies } = movieDBService
+    const { setError, setData } = this
+    getPopularMovies()
+      .then(({ results, total_results }) => {
+        setData(results, total_results)
+      })
+      .catch(() => setError(true))
+  }
+
   getMovies = () => {
     const { query, currentPage } = this.state
-    const { setError, setData } = this
+    const { setError, setData, renderPopularMovies } = this
     const { searchMovies } = movieDBService
     if (!query) {
-      this.setState({
-        dataMovies: [],
-        totalResults: null,
-        loading: false,
-      })
+      setError(false)
+      renderPopularMovies()
       return
     }
     searchMovies(query, currentPage)
       .then(({ results, total_results }) => {
-        if (!results.length) this.setNotFound(true)
         setData(results, total_results)
       })
       .catch(() => {
@@ -85,10 +91,6 @@ export default class MovieApp extends Component {
       loading: false,
       error: bool,
     })
-  }
-
-  setNotFound = (bool) => {
-    this.setState({ notFound: bool })
   }
 
   setQuery = (query) => {
@@ -114,23 +116,12 @@ export default class MovieApp extends Component {
   }
 
   render() {
-    const {
-      disconnect,
-      dataMovies,
-      query,
-      currentPage,
-      loading,
-      totalResults,
-      notFound,
-      error,
-      sessionId,
-      dataRated,
-      genres,
-    } = this.state
-    const { setError, setData, getMovies, setQuery, setPage, setLoading, setNotFound, renderRatedMovies } = this
+    const { disconnect, dataMovies, query, currentPage, loading, totalResults, error, sessionId, dataRated, genres } =
+      this.state
+    const { setError, setData, setQuery, setPage, setLoading, renderRatedMovies } = this
     return (
       <Provider value={genres}>
-        <Offline>
+        <Offline polling={{ enabled: false }}>
           <Alert type="error" message="Вы не подключениы к интернету" />
         </Offline>
         <div className="container">
@@ -152,14 +143,15 @@ export default class MovieApp extends Component {
                     dataMovies={dataMovies}
                     query={query}
                     currentPage={currentPage}
-                    notFound={notFound}
                     error={error}
                     totalResults={totalResults}
                     loading={loading}
                     setError={setError}
-                    setNotFound={setNotFound}
                     setData={setData}
-                    getMovies={getMovies}
+                    getMoviesDebounce={debounce(this.getMovies, 1000, {
+                      leading: false,
+                      trailing: true,
+                    })}
                     setQuery={(query) => setQuery(query)}
                     setPage={(page) => setPage(page)}
                     setLoading={setLoading}
