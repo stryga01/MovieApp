@@ -12,8 +12,8 @@ export default class MovieDBService {
     return await res.json()
   }
 
-  getPopularMovies = async () => {
-    const res = await this.getResourсe('/movie/popular?')
+  getPopularMovies = async (currentPage = 1) => {
+    const res = await this.getResourсe(`/movie/popular?page=${currentPage}&`)
     return res
   }
 
@@ -24,7 +24,7 @@ export default class MovieDBService {
 
   createGuestSession = async () => {
     const res = await this.getResourсe('/authentication/guest_session/new?')
-    return await res
+    return await res.guest_session_id
   }
 
   getRatedMovies = async (sessionId, page) => {
@@ -50,6 +50,14 @@ export default class MovieDBService {
   getGenres = async () => {
     const res = await this.getResourсe('/genre/movie/list?')
     return await res
+  }
+
+  getPoster = async (path) => {
+    const res = await fetch(`https://image.tmdb.org/t/p/original${path}`)
+    if (!res.ok) {
+      throw new Error('could not fetch')
+    }
+    return await res.blob()
   }
 }
 

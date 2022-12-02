@@ -1,13 +1,13 @@
 import React from 'react'
-import { Pagination } from 'antd'
-import './PaginationRenderer.css'
+import { Pagination as PaginationAntd } from 'antd'
+import './Pagination.css'
 
-const PaginationRenderer = (props) => {
+const Pagination = (props) => {
   const { currentPage, totalResults, onChangeCurrentPageHandler, loading } = props
   return (
     <div className="paginationRenderer">
       {!loading ? (
-        <Pagination
+        <PaginationAntd
           hideOnSinglePage={true}
           current={currentPage}
           total={totalResults}
@@ -20,4 +20,4 @@ const PaginationRenderer = (props) => {
   )
 }
 
-export default PaginationRenderer
+export default Pagination

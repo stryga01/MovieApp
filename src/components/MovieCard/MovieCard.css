@@ -88,6 +88,9 @@
 
 
 .image__wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex-basis: 41%;
     height: 280px;
     overflow: hidden;

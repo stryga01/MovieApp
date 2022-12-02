@@ -5,7 +5,7 @@ import { movieDBService } from '../../MovieDBService/MovieDBService'
 import MovieList from '../MovieList/MovieList'
 import Spinner from '../Spinner/Spinner'
 import './Rated.css'
-import PaginationRenderer from '../PaginationRenderer/PaginationRenderer'
+import Pagination from '../Pagination/Pagination'
 
 class Rated extends Component {
   constructor() {
@@ -13,7 +13,6 @@ class Rated extends Component {
     this.state = {
       totalResults: null,
       currentPage: 1,
-      noContentAlert: false,
     }
   }
   componentDidMount() {
@@ -28,7 +27,7 @@ class Rated extends Component {
 
   renderRatedMovies = () => {
     const { getRatedMovies } = movieDBService
-    const { sessionId, renderRatedMovies, setLoading, setError } = this.props
+    const { sessionId, renderRatedMovies, setError, setLoading } = this.props
     const { currentPage } = this.state
     setError(false)
     setLoading(true)
@@ -46,6 +45,7 @@ class Rated extends Component {
       })
       .catch(() => {
         setError(true)
+        setLoading(false)
       })
   }
 
@@ -57,17 +57,18 @@ class Rated extends Component {
 
   render() {
     const { dataRated, loading, sessionId, error } = this.props
-    const { totalResults, currentPage, noContentAlert } = this.state
+    const { totalResults, currentPage } = this.state
     const err = error ? (
       <Alert message="Что-то пошло не так, попробуйте повторить ваш запрос или включите VPN" type="error" />
     ) : null
-    const noContent = noContentAlert ? <Alert message="Вы не оценили ни одного фильма" type="info" /> : null
+    const noContent =
+      !dataRated.length && !loading ? <Alert message="Вы не оценили ни одного фильма" type="info" /> : null
     return (
       <div className="ratedWrap">
         {noContent}
         {err}
         {loading ? <Spinner /> : <MovieList movies={dataRated} sessionId={sessionId} />}
-        <PaginationRenderer
+        <Pagination
           loading={loading}
           totalResults={totalResults}
           currentPage={currentPage}

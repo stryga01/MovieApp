@@ -24,31 +24,26 @@ export default class MovieApp extends Component {
       currentPage: 1,
       sessionId: null,
     }
+    this.getMoviesDebounce = debounce(this.getMovies, 1000, { leading: false, trailing: true })
   }
 
   componentDidMount() {
     const { createGuestSession, getGenres } = movieDBService
+    this.setLoading(true)
     getGenres().then(({ genres }) => {
       this.setState({
         genres: [...genres],
       })
     })
-    if (localStorage.getItem('sessionId')) {
-      this.setState({
-        sessionId: localStorage.getItem('sessionId'),
-      })
-      return
-    }
-    createGuestSession()
-      .then(({ guest_session_id: sessionId }) => {
-        window.localStorage.setItem('sessionId', sessionId)
-        this.setState({
-          sessionId: localStorage.getItem('sessionId'),
-        })
-      })
-      .catch(() => {
-        this.setError()
-      })
+
+    this.setState({
+      sessionId:
+        localStorage.getItem('sessionId') ||
+        createGuestSession().then((sessionID) => {
+          localStorage.setItem('sessionId', sessionID)
+          this.setState({ sessionId: sessionID })
+        }),
+    })
   }
 
   renderRatedMovies = (result) => {
@@ -58,23 +53,21 @@ export default class MovieApp extends Component {
     })
   }
 
-  renderPopularMovies = () => {
+  renderPopularMovies = (currentPage) => {
     const { getPopularMovies } = movieDBService
     const { setError, setData } = this
-    getPopularMovies()
+    getPopularMovies(currentPage)
       .then(({ results, total_results }) => {
         setData(results, total_results)
       })
       .catch(() => setError(true))
   }
 
-  getMovies = () => {
-    const { query, currentPage } = this.state
-    const { setError, setData, renderPopularMovies } = this
+  getMovies = (query, currentPage) => {
+    const { setError, setData, renderPopularMovies, setLoading } = this
     const { searchMovies } = movieDBService
     if (!query) {
-      setError(false)
-      renderPopularMovies()
+      renderPopularMovies(currentPage)
       return
     }
     searchMovies(query, currentPage)
@@ -83,12 +76,12 @@ export default class MovieApp extends Component {
       })
       .catch(() => {
         setError(true)
+        setLoading(false)
       })
   }
 
   setError = (bool) => {
     this.setState({
-      loading: false,
       error: bool,
     })
   }
@@ -107,6 +100,7 @@ export default class MovieApp extends Component {
       dataMovies: [...results],
       totalResults: total_results,
     })
+    this.setLoading(false)
   }
 
   setLoading = (bool) => {
@@ -118,7 +112,7 @@ export default class MovieApp extends Component {
   render() {
     const { disconnect, dataMovies, query, currentPage, loading, totalResults, error, sessionId, dataRated, genres } =
       this.state
-    const { setError, setData, setQuery, setPage, setLoading, renderRatedMovies } = this
+    const { setError, setData, setQuery, setPage, renderRatedMovies, setLoading, getMoviesDebounce } = this
     return (
       <Provider value={genres}>
         <Offline polling={{ enabled: false }}>
@@ -148,10 +142,7 @@ export default class MovieApp extends Component {
                     loading={loading}
                     setError={setError}
                     setData={setData}
-                    getMoviesDebounce={debounce(this.getMovies, 1000, {
-                      leading: false,
-                      trailing: true,
-                    })}
+                    getMoviesDebounce={getMoviesDebounce}
                     setQuery={(query) => setQuery(query)}
                     setPage={(page) => setPage(page)}
                     setLoading={setLoading}

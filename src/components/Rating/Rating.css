@@ -1,0 +1,12 @@
+.card__rating.green{
+    border-color: #66E900;
+}
+.card__rating.yellow{
+    border-color: #E9D100;
+}
+.card__rating.orange{
+    border-color: #E97E00;
+}
+.card__rating.red{
+    border-color: #E90000;
+}
